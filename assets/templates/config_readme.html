@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración - README</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --primary: #ff1018;
+      --primary-dark: #d80d14;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b2f2f;
+      --line: #e5e7eb;
+      --shadow: 0 12px 30px rgba(0,0,0,.10);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      color: var(--text);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 32px));
+      margin: 22px auto 60px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff2d33 100%);
+      color: white;
+      border-radius: 28px;
+      padding: 36px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .95fr;
+      gap: 28px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.03;
+    }
+
+    .lead {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 60ch;
+      color: rgba(255,255,255,.95);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform .18s ease;
+    }
+
+    .btn:hover,
+    .click-zone:hover,
+    .mini-card:hover,
+    .close-modal:hover,
+    .modal-action:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background: white;
+      color: var(--primary-dark);
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(255,255,255,.35);
+      color: white;
+      background: rgba(255,255,255,.08);
+    }
+
+    .app-card {
+      background: #f41219;
+      border-radius: 24px;
+      padding: 20px;
+      min-height: 430px;
+      box-shadow: 0 18px 30px rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.18);
+      position: relative;
+    }
+
+    .window-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      font-size: 14px;
+      margin-bottom: 16px;
+      opacity: .96;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .window-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.75);
+      display: inline-block;
+    }
+
+    .mock-title {
+      color: white;
+      text-align: center;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 16px 34px 22px;
+    }
+
+    .mock-label {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 10px 0 8px;
+    }
+
+    .click-zone {
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .input-box {
+      height: 44px;
+      width: 100%;
+      border-radius: 16px;
+      background: #f3eded;
+      color: #333;
+      font-size: 15px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+      margin-bottom: 12px;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .config-btn {
+      min-height: 52px;
+      border-radius: 16px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .section {
+      margin-top: 26px;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .section p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fff;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .mini-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .mini-card p,
+    .mini-card ul {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .mini-card ul {
+      padding-left: 18px;
+      margin-top: 8px;
+    }
+
+    .mini-card li + li {
+      margin-top: 6px;
+    }
+
+    .alert {
+      margin-top: 18px;
+      background: #fff7f7;
+      border-left: 5px solid var(--primary);
+      border-radius: 16px;
+      padding: 16px;
+      color: #5b606a;
+      line-height: 1.7;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 22px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.28);
+      overflow: hidden;
+      animation: modalIn .2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(8px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-head {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff2d33 100%);
+      color: white;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .close-modal {
+      border: none;
+      background: rgba(255,255,255,.14);
+      color: white;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 22px;
+    }
+
+    .modal-body p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .modal-list {
+      margin: 16px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .modal-action {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s ease;
+    }
+
+    .modal-action.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modal-action.secondary {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .grid,
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .mock-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">README</div>
+          <h1>Configuración del sistema</h1>
+          <p class="lead">
+            Esta pantalla permite revisar y modificar los parámetros básicos que se utilizarán durante
+            la carga de tickets. También permite restaurar valores por defecto y eliminar la sesión guardada.
+          </p>
+          <div class="actions">
+            <a class="btn btn-light" href="#descripcion">Ver componentes</a>
+            <a class="btn btn-ghost" href="#recomendaciones">Ver recomendaciones</a>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="window-bar">
+            <strong>Carga automatica de Ticket</strong>
+            <div class="window-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="mock-title">Configuración</div>
+
+          <div class="mock-label">Usuario Reportante</div>
+          <button class="click-zone input-box" type="button" onclick="openInfo('usuario')">
+            chiguera
+          </button>
+
+          <div class="mock-label">Grupo de Trabajo</div>
+          <button class="click-zone input-box" type="button" onclick="openInfo('grupo')">
+            Soporte Terreno República
+          </button>
+
+          <div class="button-row">
+            <button class="config-btn" type="button" onclick="openInfo('volver')">Volver</button>
+            <button class="config-btn" type="button" onclick="openInfo('restaurar')">Restaurar</button>
+            <button class="config-btn" type="button" onclick="openInfo('borrar')">Borrar Sesión</button>
+            <button class="config-btn" type="button" onclick="openInfo('guardar')">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="descripcion">
+      <h2>¿Qué hace esta pantalla?</h2>
+      <p>
+        Esta pantalla permite administrar la configuración base usada por el sistema antes de iniciar
+        la carga de tickets. Aquí se puede definir el usuario reportante, el grupo de trabajo,
+        restaurar los valores por defecto, guardar cambios y eliminar la sesión guardada para volver
+        a iniciar sesión con otra cuenta.
+      </p>
+
+      <div class="grid">
+        <div class="mini-card" onclick="openInfo('usuario')">
+          <h3>Usuario Reportante</h3>
+          <p>Define el usuario que será utilizado como reportante en la creación del ticket.</p>
+        </div>
+
+        <div class="mini-card" onclick="openInfo('grupo')">
+          <h3>Grupo de Trabajo</h3>
+          <p>Define el grupo responsable que será utilizado durante la carga.</p>
+        </div>
+
+        <div class="mini-card" onclick="openInfo('guardar')">
+          <h3>Guardar</h3>
+          <p>Permite guardar los cambios realizados en la configuración.</p>
+        </div>
+
+        <div class="mini-card" onclick="openInfo('restaurar')">
+          <h3>Restaurar</h3>
+          <p>Permite volver a los valores por defecto definidos por el sistema.</p>
+        </div>
+
+        <div class="mini-card" onclick="openInfo('borrar')">
+          <h3>Borrar Sesión</h3>
+          <p>Permite eliminar la sesión guardada para volver a iniciar sesión con otra cuenta.</p>
+        </div>
+
+        <div class="mini-card" onclick="openInfo('volver')">
+          <h3>Volver</h3>
+          <p>Permite regresar a la pantalla anterior sin iniciar la automatización desde aquí.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="recomendaciones">
+      <h2>Recomendaciones importantes</h2>
+      <div class="grid">
+        <div class="mini-card">
+          <h3>Antes de guardar</h3>
+          <ul>
+            <li>Verifica que el usuario reportante sea el correcto.</li>
+            <li>Revisa que el grupo de trabajo corresponda al que debe utilizarse en la carga.</li>
+            <li>Guarda los cambios antes de volver a la pantalla principal.</li>
+          </ul>
+        </div>
+
+        <div class="mini-card">
+          <h3>Sobre restaurar</h3>
+          <ul>
+            <li>Restaurar elimina la configuración personalizada actual y vuelve a los valores por defecto.</li>
+            <li>Después de restaurar, revisa los campos antes de continuar.</li>
+            <li>Si necesitas una configuración específica, guarda nuevamente los datos correctos.</li>
+          </ul>
+        </div>
+
+        <div class="mini-card">
+          <h3>Sobre borrar sesión</h3>
+          <ul>
+            <li>Utiliza esta opción cuando necesites cargar tickets con otra cuenta.</li>
+            <li>Al borrar la sesión guardada, la próxima vez deberás iniciar sesión nuevamente.</li>
+            <li>No es necesario usar esta opción si seguirás trabajando con la misma cuenta.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert">
+        Recomendación: utiliza esta pantalla para dejar revisados los parámetros antes de iniciar
+        la carga. Si necesitas cambiar de cuenta, elimina la sesión guardada antes de volver al proceso.
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>README visual de la pantalla de configuración con descripciones breves de cada componente.</p>
+      <strong>Creador:</strong> Daniel Torres
+    </div>
+  </div>
+
+  <div class="modal" id="infoModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h3 id="modalTitle">Detalle</h3>
+        <button class="close-modal" type="button" onclick="closeModal()" aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="modalText"></p>
+        <ul class="modal-list" id="modalList"></ul>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const infoMap = {
+      usuario: {
+        title: 'Usuario Reportante',
+        text: 'Este campo permite definir el usuario que será utilizado como reportante del ticket.',
+        bullets: [
+          'El valor ingresado será usado durante la creación de tickets.',
+          'Debe corresponder al usuario que se desea registrar como reportante.',
+          'Se recomienda revisar este dato antes de iniciar la carga.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      grupo: {
+        title: 'Grupo de Trabajo',
+        text: 'Este campo permite definir el grupo responsable que se utilizará durante la carga.',
+        bullets: [
+          'El valor ingresado será usado al asignar el grupo responsable del ticket.',
+          'Debe coincidir con el grupo que corresponde al flujo de trabajo.',
+          'Se recomienda verificar este dato antes de guardar la configuración.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      guardar: {
+        title: 'Botón Guardar',
+        text: 'Este botón guarda los cambios realizados en la configuración.',
+        bullets: [
+          'Permite conservar el usuario reportante configurado.',
+          'Permite conservar el grupo de trabajo configurado.',
+          'Después de guardar, el sistema utilizará esos valores en la carga de tickets.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      restaurar: {
+        title: 'Botón Restaurar',
+        text: 'Este botón vuelve a cargar los valores por defecto del sistema.',
+        bullets: [
+          'Elimina la configuración personalizada actual.',
+          'Restaura el usuario reportante y el grupo de trabajo por defecto.',
+          'Se recomienda revisar los datos restaurados antes de continuar.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      borrar: {
+        title: 'Botón Borrar Sesión',
+        text: 'Este botón elimina la sesión guardada del sistema.',
+        bullets: [
+          'Sirve para volver a iniciar sesión con otra cuenta.',
+          'Después de borrar la sesión, el sistema solicitará autenticación nuevamente en el próximo uso.',
+          'Úsalo solo cuando realmente necesites cambiar de cuenta.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      volver: {
+        title: 'Botón Volver',
+        text: 'Este botón permite regresar a la pantalla principal.',
+        bullets: [
+          'No guarda cambios por sí solo.',
+          'Se recomienda usarlo una vez que la configuración ya haya sido revisada o guardada.',
+          'Permite volver al flujo principal de carga.'
+        ],
+        actions: [
+          { label: 'Volver', href: 'upload_readme.html', kind: 'primary' },
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      }
+    };
+
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+    const modalList = document.getElementById('modalList');
+    const modalActions = document.getElementById('modalActions');
+
+    function openInfo(key) {
+      const info = infoMap[key];
+      if (!info) return;
+
+      modalTitle.textContent = info.title;
+      modalText.textContent = info.text;
+      modalList.innerHTML = '';
+      modalActions.innerHTML = '';
+
+      (info.bullets || []).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        modalList.appendChild(li);
+      });
+
+      (info.actions || []).forEach(action => {
+        const el = document.createElement(action.href ? 'a' : 'button');
+        el.className = 'modal-action ' + (action.kind || 'secondary');
+        el.textContent = action.label;
+
+        if (action.href) {
+          el.href = action.href;
+        } else {
+          el.type = 'button';
+        }
+
+        if (action.close) {
+          el.addEventListener('click', function (event) {
+            event.preventDefault();
+            closeModal();
+          });
+        }
+
+        modalActions.appendChild(el);
+      });
+
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

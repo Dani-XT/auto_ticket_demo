@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carga Automática de Ticket - README</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --primary: #ff1018;
+      --primary-dark: #d80d14;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b2f2f;
+      --line: #e5e7eb;
+      --shadow: 0 12px 30px rgba(0,0,0,.10);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      color: var(--text);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 32px));
+      margin: 22px auto 60px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff2d33 100%);
+      color: white;
+      border-radius: 28px;
+      padding: 36px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 28px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 4vw, 56px);
+      line-height: 1.03;
+    }
+
+    .lead {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 60ch;
+      color: rgba(255,255,255,.95);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+
+    .btn:hover,
+    .mock-btn:hover,
+    .mock-input:hover,
+    .excel-download:hover,
+    .quick-card:hover,
+    .close-modal:hover,
+    .modal-action:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background: white;
+      color: var(--primary-dark);
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(255,255,255,.35);
+      color: white;
+      background: rgba(255,255,255,.08);
+    }
+
+    .app-card {
+      background: #f41219;
+      border-radius: 24px;
+      padding: 20px;
+      min-height: 400px;
+      box-shadow: 0 18px 30px rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.18);
+      position: relative;
+    }
+
+    .window-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      font-size: 14px;
+      margin-bottom: 18px;
+      opacity: .96;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .window-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.75);
+      display: inline-block;
+    }
+
+    .excel-download {
+      position: absolute;
+      top: 64px;
+      right: 18px;
+      width: 54px;
+      height: 54px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .mock-title {
+      color: white;
+      text-align: center;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 26px 34px 32px;
+    }
+
+    .mock-label {
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .mock-input {
+      height: 64px;
+      width: 100%;
+      border-radius: 18px;
+      background: #f1eded;
+      border: none;
+      margin-bottom: 36px;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .mock-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .mock-btn {
+      min-width: 132px;
+      padding: 18px 14px;
+      border-radius: 18px;
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+    }
+
+    .section {
+      margin-top: 26px;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .section p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card,
+    .quick-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .card h3,
+    .quick-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .card p,
+    .quick-card p,
+    .card ul {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .card ul {
+      padding-left: 18px;
+    }
+
+    .card li + li {
+      margin-top: 6px;
+    }
+
+    .quick-card {
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .quick-card strong {
+      color: var(--text);
+    }
+
+    .taglist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .alert {
+      margin-top: 18px;
+      background: #fff7f7;
+      border-left: 5px solid var(--primary);
+      border-radius: 16px;
+      padding: 16px;
+      color: #5b606a;
+      line-height: 1.7;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 22px;
+    }
+
+    .footer-btn {
+      background: none;
+      color: #5b606a;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .16s ease, opacity .16s ease;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.28);
+      overflow: hidden;
+      animation: modalIn .2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(8px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-head {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff2d33 100%);
+      color: white;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .close-modal {
+      border: none;
+      background: rgba(255,255,255,.14);
+      color: white;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 22px;
+    }
+
+    .modal-body p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .modal-list {
+      margin: 16px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .modal-action {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s ease;
+    }
+
+    .modal-action.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modal-action.secondary {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+    }
+
+    .step .n {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .step h4 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .step p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 920px) {
+      .spec-grid,
+      .spec-rules {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .mock-title {
+        font-size: 24px;
+      }
+    }
+
+    /* TODO: NUEVO */
+    .excel-section {
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .excel-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+    }
+
+    .excel-card-head {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff2d33 100%);
+      color: white;
+      padding: 26px 28px;
+    }
+
+    .excel-card-head h2 {
+      margin: 0 0 10px;
+      font-size: 26px;
+      color: white;
+    }
+
+    .excel-card-head p {
+      margin: 0;
+      color: rgba(255,255,255,.92);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .excel-card-body {
+      padding: 24px 28px 28px;
+      background: #ffffff;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+
+    .spec-panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      padding: 18px;
+    }
+
+    .spec-panel h4 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .spec-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .spec-tag {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      border: 1px solid #d9dee5;
+      color: #1f2937;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      width: 38%;
+      color: var(--text);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .spec-table td {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .spec-rules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .spec-rule {
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .spec-rule .num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .spec-rule h5 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .spec-rule p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 920px) {
+      .spec-grid,
+      .spec-rules {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .spec-note {
+      margin-top: 18px;
+      border-radius: 16px;
+      padding: 16px;
+      background: #fff8e7;
+      border: 1px solid #f3d48a;
+      color: #6b4f00;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">README</div>
+          <h1>Carga Automática de Ticket</h1>
+          <p class="lead">
+            Este Frame permite cargar una planilla Excel, para automatizar el proceso de creacion y cierre de tickets. Este README sirve para mostrar su funcionamiento.
+          </p>
+          <div class="actions">
+            <a class="btn btn-light" href="#descripcion">Ver uso</a>
+            <a class="btn btn-ghost" href="#consideraciones">Consideraciones</a>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="window-bar">
+            <strong>Carga automatica de Ticket</strong>
+            <div class="window-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <button class="excel-download" type="button" onclick="openInfo('excel')" aria-label="Descargar planilla Excel">
+            <svg viewBox="0 0 64 64" width="54" height="54" aria-hidden="true">
+              <rect x="18" y="8" width="32" height="48" rx="2" fill="#21a366"/>
+              <rect x="11" y="14" width="24" height="36" rx="2" fill="#107c41"/>
+              <path d="M40 18h10M40 28h10M40 38h10" stroke="#33c481" stroke-width="2"/>
+              <path d="M24 23l-6 9 6 9M18 23l6 9-6 9" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="mock-title">Carga Automática de Ticket</div>
+          <div class="mock-label">Cargar Planilla</div>
+          <button class="mock-input" type="button" onclick="openInfo('cargar')" aria-label="Cargar planilla"></button>
+          <div class="mock-actions">
+            <button class="mock-btn" type="button" onclick="openInfo('config')">Configuración</button>
+            <button class="mock-btn" type="button" onclick="openInfo('enviar')">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="descripcion">
+      <h2>¿Qué hace este frame?</h2>
+      <p>
+        Este frame funciona como punto de inicio. Su propósito es permitir al usuario escoger la planilla de ticket, 
+        validar y luego preparar los tickets pendientes para cargar automaticamente en la plataforma. Permite descargar la plantilla de excel usada para registrar las
+        actividades realizadas durante el dia.
+      </p>
+      <div class="taglist">
+        <span class="tag">Pantalla principal</span>
+        <span class="tag">Carga de planilla</span>
+        <span class="tag">Acceso a configuración</span>
+        <span class="tag">Inicio de automatizacion</span>
+      </div>
+    </section>
+
+    <section class="section" id="como-usar">
+      <h2>Cómo usar la aplicación</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h4>Seleccionar archivo</h4>
+          <p>El usuario carga el Excel desde la pantalla principal.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h4>Validar datos</h4>
+          <p>Se revisa el formato, encabezados y columnas obligatorias.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h4>Automatizar tickets</h4>
+          <p>La aplicación filtra los ticket pendientes, y los crea en la plataforma.</p>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <h4>Guardar resultados</h4>
+          <p>Se actualiza el Excel hasta que se finalice el proceso.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="consideraciones">
+      <h2>Descripción de cada apartado</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Cargar Planilla</h3>
+          <p>
+            En este apartado se selecciona la planilla Excel que contiene los datos a procesar.
+            La aplicación utilizará esta información para realizar la carga de tickets.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Configuración</h3>
+          <p>
+            En este apartado se revisan los parámetros básicos de la carga.
+            Aquí se puede verificar el usuario reportante y el grupo de trabajo que serán utilizados por el sistema.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Enviar</h3>
+          <p>
+            Este apartado permite iniciar la ejecución del proceso.
+            Una vez comenzada la carga, el sistema mostrará el avance y el resultado de cada registro procesado.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Ícono de Excel</h3>
+          <p>
+            Este ícono permite descargar la plantilla base del sistema.
+            La plantilla debe utilizarse como formato de trabajo para registrar correctamente la información antes de la carga.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section excel-section">
+      <div class="excel-card">
+        <div class="excel-card-head">
+          <h2>Requisitos de la planilla Excel</h2>
+          <p>
+            La planilla debe respetar una estructura mínima para que el sistema pueda leerla correctamente
+            y detectar los tickets pendientes.
+          </p>
+        </div>
+
+        <div class="excel-card-body">
+          <div class="spec-grid">
+            <div class="spec-panel">
+              <h4>Encabezados obligatorios</h4>
+              <div class="spec-tags">
+                <span class="spec-tag">FECHA</span>
+                <span class="spec-tag">HORA</span>
+                <span class="spec-tag">PROBLEMA</span>
+                <span class="spec-tag">SOLUCION</span>
+                <span class="spec-tag">TECNICO</span>
+              </div>
+            </div>
+
+            <div class="spec-panel">
+              <h4>Resumen rápido</h4>
+              <table class="spec-table">
+                <tr>
+                  <th>Columna ticket</th>
+                  <td>Puede llamarse <strong>TICKET</strong> o <strong>TKT</strong>.</td>
+                </tr>
+                <tr>
+                  <th>Fila pendiente</th>
+                  <td>Debe tener <strong>SOLUCION</strong> con información y la columna de ticket vacía.</td>
+                </tr>
+                <tr>
+                  <th>Fila no procesada</th>
+                  <td>No será procesada si ya tiene ticket registrado o si falta la solución.</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="spec-rules">
+            <div class="spec-rule">
+              <div class="num">1</div>
+              <h5>Fecha y hora informadas</h5>
+              <p>
+                Si la planilla contiene fecha y hora, el sistema utilizará esos valores durante la carga.
+              </p>
+            </div>
+
+            <div class="spec-rule">
+              <div class="num">2</div>
+              <h5>Sin fecha ni hora</h5>
+              <p>
+                Si la planilla no contiene fecha ni hora, el sistema utilizará la fecha y hora actuales de la plataforma.
+              </p>
+            </div>
+
+            <div class="spec-rule">
+              <div class="num">3</div>
+              <h5>Fecha del día actual</h5>
+              <p>
+                Si la fecha corresponde al día actual, la hora no puede superar la hora actual permitida por la plataforma.
+              </p>
+            </div>
+          </div>
+
+          <div class="spec-note">
+            <strong>Recomendación:</strong> lo más recomendable es completar las columnas
+            <strong>FECHA</strong> y <strong>HORA</strong> para evitar diferencias durante la creación del ticket.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Recomendaciones y consideraciones importantes</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Recomendaciones de uso</h3>
+          <ul>
+            <li>Utiliza siempre una planilla Excel con formato válido del sistema.</li>
+            <li>Revisa la configuración antes de iniciar la carga, especialmente el usuario reportante y el grupo de trabajo.</li>
+            <li>Verifica que la planilla corresponda al archivo que realmente deseas procesar antes de presionar <strong>Enviar</strong>.</li>
+            <li>Es recomendable usar la plantilla base del sistema para preparar la información antes de la carga.</li>
+            <li>Si necesitas orientación, revisa los archivos de ayuda incluidos en la aplicación.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Precauciones durante la ejecución</h3>
+          <ul>
+            <li>Una vez iniciado el proceso, espera a que la página cargue completamente antes de mover la ventana del navegador.</li>
+            <li>Evita interactuar manualmente con la ventana del navegador mientras la automatización se encuentra en ejecución.</li>
+            <li>No cierres la aplicación ni el navegador durante el procesamiento automático.</li>
+            <li>No intentes iniciar una nueva carga mientras exista un proceso en curso.</li>
+            <li>Si ocurre un error, revisa la planilla y vuelve a intentar solo cuando el proceso anterior haya terminado.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert">
+        Recomendación: al iniciar la carga, espera a que la ventana del navegador termine de abrir y la página cargue completamente antes de moverla o interactuar con ella.
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>README visual en HTML con popups descriptivos y acceso a configuración, proceso y descarga de plantilla.</p>
+      <strong>Creador: </strong><a class="footer-btn" href="https://github.com/Dani-XT">Daniel Torres</a>
+    </div>
+  </div>
+
+  <div class="modal" id="infoModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h3 id="modalTitle">Detalle</h3>
+        <button class="close-modal" type="button" onclick="closeModal()" aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="modalText"></p>
+        <ul class="modal-list" id="modalList"></ul>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const infoMap = {
+      cargar: {
+        title: 'Cargar Planilla',
+        text: 'Este apartado permite seleccionar la planilla Excel que se utilizará para cargar los tickets.',
+        bullets: [
+          'Se debe elegir una planilla válida.',
+          'La planilla debe contener la información necesaria para el proceso.',
+          'Sin una planilla correcta no se podrá continuar.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      config: {
+        title: 'Botón Configuración',
+        text: 'Este botón abre la página de configuración del sistema.',
+        bullets: [
+          'Permite revisar y modificar el usuario reportante.',
+          'Permite revisar y modificar el grupo de trabajo.',
+          'Ayuda a preparar correctamente la carga de tickets antes de iniciar el proceso.',
+        ],
+        actions: [
+          { label: 'Abrir Configuración', href: 'config_readme.html', kind: 'primary' },
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      enviar: {
+        title: 'Botón Enviar',
+        text: 'Este botón inicia el proceso de carga de tickets y abre la pantalla de seguimiento.',
+        bullets: [
+          'Muestra el estado general del proceso.',
+          'Permite ver el avance de cada fila cargada.',
+          'Solo funciona cuando ya se ha cargado una planilla válida',
+        ],
+        actions: [
+          { label: 'Abrir Enviar', href: 'process_readme.html', kind: 'primary' },
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+      excel: {
+        title: 'Ícono de Excel',
+        text: 'Permite descargar la plantilla base para registrar las actividades y luego cargarlas al sistema.',
+        bullets: [
+          'Esta plantilla debe usarse como formato de trabajo.',
+          'Aquí se registra la información necesaria para la carga de tickets.',
+          'Se recomienda no modificar la estructura de la plantilla.'
+        ],
+        actions: [
+          { label: 'Cerrar', kind: 'secondary', close: true }
+        ]
+      },
+    };
+
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+    const modalList = document.getElementById('modalList');
+    const modalActions = document.getElementById('modalActions');
+
+    function openInfo(key) {
+      const info = infoMap[key];
+      if (!info) return;
+
+      modalTitle.textContent = info.title;
+      modalText.textContent = info.text;
+      modalList.innerHTML = '';
+      modalActions.innerHTML = '';
+
+      (info.bullets || []).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        modalList.appendChild(li);
+      });
+
+      (info.actions || []).forEach(action => {
+        const el = document.createElement(action.href ? 'a' : 'button');
+        el.className = 'modal-action ' + (action.kind || 'secondary');
+        el.textContent = action.label;
+
+        if (action.href) {
+          el.href = action.href;
+          if (action.download) el.setAttribute('download', '');
+        } else {
+          el.type = 'button';
+        }
+
+        if (action.close) {
+          el.addEventListener('click', function (event) {
+            event.preventDefault();
+            closeModal();
+          });
+        }
+
+        modalActions.appendChild(el);
+      });
+
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
