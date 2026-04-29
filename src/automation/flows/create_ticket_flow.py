@@ -15,6 +15,7 @@ from src.automation.waits import (
     click_radio_btn,
 )
 from src.utils.datetime_utils import parse_excel_date_text, parse_excel_time_text, parse_text_datetime
+from src.utils.text_utils import format_name
 from src.utils.exceptions import TicketProcessError, UncertainTicketCreationError
 
 
@@ -260,6 +261,8 @@ class CreateTicketFlow(BaseFlow):
             logger.info("Seleccionando Técnico Asignado")
 
             tecnico = self._get_label(s.USER_INFO_LABEL)
+
+            tecnico = format_name(tecnico)
 
             self._safe_click(s.TECNICO_ENCARGADO_BUTTON)
             popup = self._wait_popup(s.TECNICO_ENCARGADO_POPUP, must_contain_selector="input.pawDFSelFilterTableInp")
